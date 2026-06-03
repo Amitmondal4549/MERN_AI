@@ -1,31 +1,54 @@
-
-import { createContext, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 
 export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const TOKEN_KEY = "firebase_token";
 
-    const login = localStorage.getItem('isLogin') === 'true';
-
-    const getUserInfo = () => {
-        try {
-            const data = localStorage.getItem("userInfo");
-            return data ? JSON.parse(data) : null;
-        } catch (err) {
-            console.error("Failed to parse userInfo from localStorage:", err);
-            localStorage.removeItem("userInfo");
-            return null;
-        }
-    };
-
-    const [isLogin, setlogin] = useState(login);
-    const [userInfo, setUserInfo] = useState(getUserInfo);
-
-    return (
-        <AuthContext.Provider value={{ isLogin, setlogin, userInfo, setUserInfo }}>
-            {children}
-        </AuthContext.Provider>
-    );
+function getStorageItem(key, fallback = null) {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : fallback;
+  } catch {
+    localStorage.removeItem(key);
+    return fallback;
+  }
 }
+
+const AuthProvider = ({ children }) => {
+  const [isLogin, setlogin] = useState(() => localStorage.getItem("isLogin") === "true");
+  const [userInfo, setUserInfo] = useState(() => getStorageItem("userInfo"));
+  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+
+  const saveToken = useCallback((t) => {
+    if (t) {
+      localStorage.setItem(TOKEN_KEY, t);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+    setToken(t);
+  }, []);
+
+  const loginUser = useCallback((user, t) => {
+    localStorage.setItem("userInfo", JSON.stringify(user));
+    localStorage.setItem("isLogin", "true");
+    saveToken(t);
+    setUserInfo(user);
+    setlogin(true);
+  }, [saveToken]);
+
+  const logoutUser = useCallback(() => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("isLogin");
+    saveToken(null);
+    setUserInfo(null);
+    setlogin(false);
+  }, [saveToken]);
+
+  return (
+    <AuthContext.Provider value={{ isLogin, setlogin, userInfo, setUserInfo, token, saveToken, loginUser, logoutUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export default AuthProvider;

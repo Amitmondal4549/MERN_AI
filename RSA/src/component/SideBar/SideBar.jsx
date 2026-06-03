@@ -11,13 +11,10 @@ import { AuthContext } from '../../utils/AuthContext';
 const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLogin, setlogin, userInfo, setUserInfo } = useContext(AuthContext);
+  const { isLogin, userInfo, logoutUser } = useContext(AuthContext);
 
   const handleLogout = () => {
-    localStorage.removeItem("isLogin");
-    localStorage.removeItem("userInfo");
-    setlogin(false);
-    setUserInfo(null);
+    logoutUser();
     navigate('/');
   }
 

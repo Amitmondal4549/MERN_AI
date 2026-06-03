@@ -58,12 +58,11 @@ const History = () => {
           {
             data.map((item, index) => {
               return (
-                <div className={styles.HistoryCard}>
-                  <div  key={item._id} className={styles.cardPercentage}>{item.score}%</div>
-                  {/* <h2>{}</h2> */}
+                <div key={item._id} className={styles.HistoryCard}>
+                  <div className={styles.cardPercentage}>{item.score}%</div>
                   <p>Resume Name : {item.resume_name}</p>
                   <p>{item.feedback}</p>
-                  <p>Dated : {item.createdAt.slice(0, 10)}</p>
+                  <p>Dated : {item.createdAt ? item.createdAt.slice(0, 10) : "N/A"}</p>
                 </div>
               );
             })

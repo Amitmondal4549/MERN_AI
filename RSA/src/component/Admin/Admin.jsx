@@ -64,9 +64,9 @@ const Admin = () => {
         {
           data.map((item, index) => {
             return (
-              <div className={styles.AdminCard}>
+              <div key={item._id} className={styles.AdminCard}>
                 <h2>{item?.user?.name}</h2>
-                <p style={{ color: "blue" }}>{item?.user?.email}</p>
+                <p style={{ color: "#4848de" }}>{item?.user?.email}</p>
                 <h3>Score : {item.score}%</h3>
                 <p>{item.feedback}</p>
               </div>

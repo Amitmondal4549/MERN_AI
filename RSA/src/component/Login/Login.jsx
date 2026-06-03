@@ -12,7 +12,7 @@ import axios from '../../utils/axios';
 
 const Login = () => {
 
-  const { setlogin, setUserInfo } = useContext(AuthContext);
+  const { setlogin, setUserInfo, loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
@@ -30,9 +30,7 @@ const Login = () => {
         photoUrl: user.photoURL
       }
 
-      const response = await axios.post('/user', userData, {
-        headers: { Authorization: `Bearer ${idToken}` }
-      });
+      const response = await axios.post('/user', userData);
       const loggedInUser = response.data.user;
 
       if (!loggedInUser || !loggedInUser._id) {
@@ -41,10 +39,7 @@ const Login = () => {
         return;
       }
 
-      setUserInfo(loggedInUser);
-      setlogin(true);
-      localStorage.setItem("userInfo", JSON.stringify(loggedInUser));
-      localStorage.setItem("isLogin", 'true');
+      loginUser(loggedInUser, idToken);
       navigate('/dashboard');
 
     } catch (err) {

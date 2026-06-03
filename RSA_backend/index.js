@@ -21,6 +21,7 @@ const ALLOWED_ORIGINS = [
   "https://smartresumematch.netlify.app",
   "https://resumematchscore.netlify.app",
   "https://beautiful-acceptance-production-4c1d.up.railway.app",
+  "https://mernai-production.up.railway.app",
   ...(CORS_ORIGIN ? CORS_ORIGIN.split(',').map(s => s.trim()) : []),
 ];
 

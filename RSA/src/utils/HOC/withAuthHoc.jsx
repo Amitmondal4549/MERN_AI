@@ -6,20 +6,20 @@ import { CircularProgress } from "@mui/material"
 const WithAuthHoc = (WrappedComponent) => {
   return (Props) => {
     const navigate = useNavigate();
-    const { setlogin } = useContext(AuthContext);
+    const { logoutUser } = useContext(AuthContext);
     const [checking, setChecking] = useState(true);
 
     useEffect(() => {
       const isLogin = localStorage.getItem('isLogin');
 
       if (!isLogin) {
-        setlogin(false);
+        logoutUser();
         navigate('/');
         return;
       }
 
       setChecking(false);
-    }, [navigate, setlogin]);
+    }, [navigate, logoutUser]);
 
     if (checking) {
       return (

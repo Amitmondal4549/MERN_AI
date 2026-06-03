@@ -1,46 +1,80 @@
-.Login{
+.Login {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 10px;
+    background: linear-gradient(135deg, #0b0b5a 0%, #1a1a6e 50%, #2d2d8a 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.loginCard{
-    background-color: black;
-    padding: 20px;
-    width: 30%;
-    border-radius: 20px;
-    color: white;
-}
-.loginCardTitle{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.googleBtn{
-    padding: 20px;
-    box-sizing: border-box;
-    width: 100%;
-    background-color: white;
-    color: black;
-    border-radius: 30px;
-    font-size: 22px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    cursor: pointer;
+    z-index: 100;
 }
 
-@media screen and (max-width:780px){
-    .loginCard{
-        width: 80%;
+.loginCard {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 24px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+}
+
+.loginCardTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.loginCardTitle h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.googleBtn {
+    padding: 16px 24px;
+    width: 100%;
+    background: white;
+    color: #1a1a2e;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.googleBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.disabledBtn {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+@media screen and (max-width: 780px) {
+    .loginCard {
+        max-width: 90%;
+        padding: 32px 24px;
+    }
+
+    .loginCardTitle h1 {
+        font-size: 28px;
     }
 }
