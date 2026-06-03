@@ -53,6 +53,10 @@ const Dashboard = () => {
       toast("Please fill job description and upload a resume", "warning");
       return;
     }
+    if (JobDesc.trim().length < 10) {
+      toast("Job description must be at least 10 characters", "warning");
+      return;
+    }
     if (!userInfo || !userInfo._id) {
       toast("User not authenticated. Please log in again.", "error");
       return;
@@ -60,7 +64,7 @@ const Dashboard = () => {
 
     const formData = new FormData();
     formData.append("resume", resumeFile);
-    formData.append("job_desc", JobDesc);
+    formData.append("job_desc", JobDesc.trim());
     formData.append("user", userInfo._id);
     setLoading(true);
 
