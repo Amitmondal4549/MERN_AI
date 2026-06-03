@@ -14,7 +14,6 @@
 .loginCard {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.1);
     padding: 48px 40px;
     width: 100%;
@@ -25,18 +24,29 @@
     box-shadow: 0 25px 50px rgba(0,0,0,0.25);
 }
 
-.loginCardTitle {
+.logoSection {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 32px;
+    gap: 12px;
+    margin-bottom: 40px;
 }
 
-.loginCardTitle h1 {
-    font-size: 32px;
+.logoSection svg {
+    opacity: 0.9;
+}
+
+.logoSection h1 {
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.logoSection p {
+    font-size: 14px;
+    opacity: 0.6;
+    font-weight: 400;
 }
 
 .googleBtn {
@@ -57,7 +67,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.googleBtn:hover {
+.googleBtn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
@@ -65,7 +75,6 @@
 .disabledBtn {
     opacity: 0.7;
     cursor: not-allowed;
-    transform: none !important;
 }
 
 @media screen and (max-width: 780px) {
@@ -74,7 +83,7 @@
         padding: 32px 24px;
     }
 
-    .loginCardTitle h1 {
-        font-size: 28px;
+    .logoSection h1 {
+        font-size: 24px;
     }
 }

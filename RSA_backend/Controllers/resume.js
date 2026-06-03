@@ -6,9 +6,10 @@ const { CohereClientV2 } = require("cohere-ai");
 const fs = require("fs");
 const { success, error } = require('../utils/response');
 
-const cohere = new CohereClientV2({
-  token: process.env.COHERE_API_KEY,
-});
+let cohere = null;
+if (process.env.COHERE_API_KEY) {
+  cohere = new CohereClientV2({ token: process.env.COHERE_API_KEY });
+}
 
 function truncateText(text, maxLength = 8000) {
   if (!text || text.length <= maxLength) return text;
@@ -25,7 +26,7 @@ async function callCohereWithRetry(prompt, retries = 2) {
       const response = await cohere.chat({
         model: "command-a-03-2025",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 300,
+        max_tokens: 600,
         temperature: 0.3,
       });
       return response;
@@ -48,13 +49,17 @@ exports.addResume = async (req, res, next) => {
       return error(res, "Resume file is required", 400);
     }
 
+    if (!cohere) {
+      return error(res, "COHERE_API_KEY is not configured on the server", 503);
+    }
+
     const pdfPath = req.file.path;
     const dataBuffer = await fs.promises.readFile(pdfPath);
     const pdfData = await pdfParse(dataBuffer);
     const resumeText = truncateText(pdfData.text);
 
     const prompt = [
-      'You are an expert ATS (Applicant Tracking System) screener.',
+      'You are an expert ATS (Applicant Tracking System) screener and career coach.',
       '',
       'Analyze how well the following resume matches the job description.',
       'Evaluate on these dimensions:',
@@ -69,25 +74,54 @@ exports.addResume = async (req, res, next) => {
       'Job Description:',
       job_desc,
       '',
-      'Return your analysis in this exact format:',
-      'Score: <number 0-100>',
-      'Reason: <2-3 sentence explanation focusing on key strengths and gaps>',
+      'Return your analysis in this exact JSON format (no markdown, no code fences):',
+      '{',
+      '  "score": <number 0-100>,',
+      '  "reason": "<2-3 sentence explanation focusing on key strengths and gaps>",',
+      '  "skills": ["<skill1>", "<skill2>", ...],',
+      '  "missing_skills": ["<missing_skill1>", ...],',
+      '  "strengths": ["<strength1>", "<strength2>", ...],',
+      '  "weaknesses": ["<weakness1>", "<weakness2>", ...],',
+      '  "suggestions": ["<suggestion1>", "<suggestion2>", ...]',
+      '}',
     ].join('\n');
 
     const response = await callCohereWithRetry(prompt);
 
-    let result = response.message.content[0].text;
-    const match = result.match(/Score:\s*(\d+)/);
-    const score = match ? match[1] : null;
-    const reasonMatch = result.match(/Reason:\s*([\s\S]*)/);
-    const reason = reasonMatch ? reasonMatch[1].trim() : null;
+    let raw = response.message.content[0].text;
+
+    // Strip markdown code fences if present
+    raw = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      // fallback: extract score/reason from text format
+      const scoreMatch = raw.match(/score["']?\s*:\s*(\d+)/i);
+      const reasonMatch = raw.match(/reason["']?\s*:\s*"([^"]+)"/i);
+      parsed = {
+        score: scoreMatch ? scoreMatch[1] : null,
+        reason: reasonMatch ? reasonMatch[1].trim() : raw.slice(0, 300),
+        skills: [],
+        missing_skills: [],
+        strengths: [],
+        weaknesses: [],
+        suggestions: [],
+      };
+    }
 
     const newResume = new ResumeModel({
       user,
       resume_name: req.file.originalname,
       job_desc,
-      score,
-      feedback: reason,
+      score: String(parsed.score ?? ''),
+      feedback: parsed.reason || '',
+      skills: parsed.skills || [],
+      missing_skills: parsed.missing_skills || [],
+      strengths: parsed.strengths || [],
+      weaknesses: parsed.weaknesses || [],
+      suggestions: parsed.suggestions || [],
     });
 
     await newResume.save();

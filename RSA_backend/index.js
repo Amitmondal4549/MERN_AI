@@ -18,10 +18,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN;
 const ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://smartresumematch.netlify.app",
-  "https://resumematchscore.netlify.app",
   "https://beautiful-acceptance-production-4c1d.up.railway.app",
-  "https://mernai-production.up.railway.app",
   ...(CORS_ORIGIN ? CORS_ORIGIN.split(',').map(s => s.trim()) : []),
 ];
 
@@ -119,8 +116,8 @@ async function start() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log("✓ Backend server is running on port " + PORT);
     console.log("   Environment: " + NODE_ENV);
-    console.log("   Health check: http://localhost:" + PORT + "/api/health");
-    console.log("   Ready for Railway deployment ✅");
+    console.log("   Health check: /api/health");
+    console.log("   Ready ✅");
   });
 }
 

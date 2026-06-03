@@ -1,4 +1,5 @@
 const UserModel = require('../Models/user');
+const ResumeModel = require('../Models/resume');
 const { success, error } = require('../utils/response');
 
 exports.register = async (req, res, next) => {
@@ -17,4 +18,21 @@ exports.register = async (req, res, next) => {
     console.error(`[${req.requestId}] Register error:`, err.message);
     next(err);
   }
-}
+};
+
+exports.getStats = async (req, res, next) => {
+  try {
+    const [totalUsers, totalAnalyses, recentAnalyses] = await Promise.all([
+      UserModel.countDocuments(),
+      ResumeModel.countDocuments(),
+      ResumeModel.find()
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .populate('user', 'name email'),
+    ]);
+    success(res, { totalUsers, totalAnalyses, recentAnalyses }, "Admin stats fetched");
+  } catch (err) {
+    console.error(`[${req.requestId}] getStats error:`, err.message);
+    next(err);
+  }
+};
