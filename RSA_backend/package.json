@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFiles ./tests/setup.js --testPathPattern=tests/",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFiles ./tests/setup.js --watch",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build:frontend": "cd ../RSA && npm install && npm run build",
+    "build:copy": "node -e \"const fs=require('fs'),p=require('path');const src=p.join('..','RSA','dist');const dst=p.join(__dirname,'build');if(fs.existsSync(src)){if(fs.existsSync(dst))fs.rmSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});console.log('✓ Frontend build copied to backend build/');}else console.warn('⚠ Frontend dist not found at '+src);\"",
+    "build:all": "npm run build:frontend && npm run build:copy && npm install",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFiles ./tests/setup.js --testPathPattern=tests/",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFiles ./tests/setup.js --watch"
   },
   "author": "",
   "license": "ISC",
