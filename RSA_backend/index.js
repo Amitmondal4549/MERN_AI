@@ -19,6 +19,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://beautiful-acceptance-production-4c1d.up.railway.app",
+  "https://resume-match-score.up.railway.app",
+  "https://resume-match-api.up.railway.app",
   "https://smartresumematch.netlify.app",
   "https://resumematchscore.netlify.app",
   ...(CORS_ORIGIN ? CORS_ORIGIN.split(',').map(s => s.trim()) : []),
