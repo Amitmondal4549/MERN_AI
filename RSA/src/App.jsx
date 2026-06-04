@@ -3,6 +3,7 @@ import SideBar from './component/SideBar/SideBar'
 import { Routes, Route } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { AuthContext } from './utils/AuthContext';
+import './App.css';
 
 const Login = lazy(() => import('./component/Login/Login'));
 const Dashboard = lazy(() => import('./component/Dashboard/Dashboard'));
@@ -33,15 +34,17 @@ function App() {
   return (
     <div className='App'>
       {isLogin && <SideBar />}
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/history' element={<History />} />
-          <Route path='/admin' element={<Admin />} />
-          <Route path='*' element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      <div className='content'>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path='/' element={<Login />} />
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/history' element={<History />} />
+            <Route path='/admin' element={<Admin />} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </div>
     </div>
   )
 }

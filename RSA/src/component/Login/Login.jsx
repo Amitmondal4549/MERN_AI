@@ -22,12 +22,21 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const idToken = await user.getIdToken();
+      console.log('[Auth] Firebase ID token received:', idToken ? 'present' : 'missing');
 
+      // Save token to localStorage BEFORE making the backend request
+      // so the Axios interceptor picks it up and attaches it as Authorization header.
+      localStorage.setItem('firebase_token', idToken);
+      console.log('[Auth] Token saved to localStorage');
+
+      console.log('[Auth] Sending POST /api/user with token attached via interceptor');
       const response = await axios.post('/user', {
         name: user.displayName,
         email: user.email,
         photoUrl: user.photoURL,
       });
+      console.log('[Auth] POST /api/user response:', response.status, response.data);
+
       const loggedInUser = response.data.user;
 
       if (!loggedInUser || !loggedInUser._id) {
@@ -37,9 +46,11 @@ const Login = () => {
       }
 
       loginUser(loggedInUser, idToken);
+      console.log('[Auth] User logged in successfully:', loggedInUser.email);
       navigate('/dashboard');
     } catch (err) {
       const message = err.response?.data?.error || "Something went wrong. Please try again.";
+      console.error('[Auth] Login failed:', err.response?.status, err.response?.data || err.message);
       toast(message, "error");
     } finally {
       setLoading(false);

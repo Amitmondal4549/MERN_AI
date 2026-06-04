@@ -1,89 +1,110 @@
 .Login {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(135deg, #0b0b5a 0%, #1a1a6e 50%, #2d2d8a 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #0b0b5a 0%, #1a1a6e 50%, #2d2d8a 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
 }
 
 .loginCard {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 48px 40px;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 24px;
-    color: white;
-    text-align: center;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  margin: 0 16px;
 }
 
 .logoSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
 }
 
 .logoSection svg {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .logoSection h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
+  font-size: clamp(22px, 4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
 .logoSection p {
-    font-size: 14px;
-    opacity: 0.6;
-    font-weight: 400;
+  font-size: clamp(12px, 2vw, 14px);
+  opacity: 0.6;
+  font-weight: 400;
 }
 
 .googleBtn {
-    padding: 16px 24px;
-    width: 100%;
-    background: white;
-    color: #1a1a2e;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  padding: 16px 24px;
+  width: 100%;
+  background: white;
+  color: #1a1a2e;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .googleBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
 .disabledBtn {
-    opacity: 0.7;
-    cursor: not-allowed;
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-@media screen and (max-width: 780px) {
-    .loginCard {
-        max-width: 90%;
-        padding: 32px 24px;
-    }
+/* ════════════════════════════════════════
+   TABLET: 641px – 1024px
+   ════════════════════════════════════════ */
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+  .loginCard {
+    max-width: 400px;
+    padding: 40px 32px;
+  }
+}
 
-    .logoSection h1 {
-        font-size: 24px;
-    }
+/* ════════════════════════════════════════
+   MOBILE: ≤ 640px
+   ════════════════════════════════════════ */
+@media screen and (max-width: 640px) {
+  .loginCard {
+    max-width: 100%;
+    padding: 32px 24px;
+    margin: 0 12px;
+  }
+
+  .logoSection {
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .googleBtn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
 }

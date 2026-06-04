@@ -10,12 +10,34 @@ exports.register = async (req, res, next) => {
     if (!userExist) {
       let newUser = new UserModel({ name, email, photoUrl });
       await newUser.save();
+      console.log(`[${req.requestId}] New user registered:`, email);
       return success(res, { user: newUser }, "User Registered Successfully");
     }
 
+    console.log(`[${req.requestId}] Existing user logged in:`, email);
     return success(res, { user: userExist }, "Welcome Back");
   } catch (err) {
     console.error(`[${req.requestId}] Register error:`, err.message);
+    next(err);
+  }
+};
+
+exports.getUser = async (req, res, next) => {
+  try {
+    const email = req.firebaseUser?.email;
+    if (!email) {
+      return res.status(401).json({ error: 'No authenticated user email found' });
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found in database' });
+    }
+
+    console.log(`[${req.requestId}] Session verified for:`, email);
+    return success(res, { user }, "Session verified");
+  } catch (err) {
+    console.error(`[${req.requestId}] Get user error:`, err.message);
     next(err);
   }
 };

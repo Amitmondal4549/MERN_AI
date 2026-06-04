@@ -1,4 +1,5 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback, useEffect } from "react";
+import axios from "./axios";
 
 export const AuthContext = createContext();
 
@@ -19,6 +20,46 @@ const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(() => getStorageItem("userInfo"));
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
 
+  // Verify session on mount: call GET /api/user to confirm token is still valid
+  useEffect(() => {
+    const savedToken = localStorage.getItem(TOKEN_KEY);
+    const savedIsLogin = localStorage.getItem("isLogin") === "true";
+
+    if (savedIsLogin && savedToken) {
+      console.log('[Auth] Verifying session with backend...');
+      axios.get('/user')
+        .then((res) => {
+          const user = res.data.user;
+          if (user) {
+            console.log('[Auth] Session verified:', user.email);
+            setUserInfo(user);
+            setlogin(true);
+            localStorage.setItem("userInfo", JSON.stringify(user));
+            localStorage.setItem("isLogin", "true");
+          } else {
+            console.warn('[Auth] Session invalid — no user in response');
+            logoutUserCleanup();
+          }
+        })
+        .catch((err) => {
+          console.error('[Auth] Session verification failed:', err.response?.status, err.response?.data || err.message);
+          logoutUserCleanup();
+        });
+    } else {
+      console.log('[Auth] No saved session found');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function logoutUserCleanup() {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem(TOKEN_KEY);
+    setUserInfo(null);
+    setlogin(false);
+    setToken(null);
+  }
+
   const saveToken = useCallback((t) => {
     if (t) {
       localStorage.setItem(TOKEN_KEY, t);
@@ -34,15 +75,12 @@ const AuthProvider = ({ children }) => {
     saveToken(t);
     setUserInfo(user);
     setlogin(true);
+    console.log('[Auth] loginUser — user saved, isLogin=true');
   }, [saveToken]);
 
   const logoutUser = useCallback(() => {
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("isLogin");
-    saveToken(null);
-    setUserInfo(null);
-    setlogin(false);
-  }, [saveToken]);
+    logoutUserCleanup();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isLogin, setlogin, userInfo, setUserInfo, token, saveToken, loginUser, logoutUser }}>

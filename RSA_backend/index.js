@@ -19,6 +19,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://beautiful-acceptance-production-4c1d.up.railway.app",
+  "https://smartresumematch.netlify.app",
+  "https://resumematchscore.netlify.app",
   ...(CORS_ORIGIN ? CORS_ORIGIN.split(',').map(s => s.trim()) : []),
 ];
 
@@ -52,12 +54,6 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { error: 'Too many login attempts, please try again later' },
-});
-
 // health-check endpoint
 app.get('/api/health', (_req, res) => {
   res.json({
@@ -73,7 +69,7 @@ app.get('/api/health', (_req, res) => {
 const UserRoutes = require('./Routes/user');
 const ResumeRoutes = require('./Routes/resume');
 
-app.use('/api/user', authLimiter, UserRoutes)
+app.use('/api/user', UserRoutes)
 app.use('/api/resume', ResumeRoutes)
 
 const buildPath = path.join(__dirname, "build");
